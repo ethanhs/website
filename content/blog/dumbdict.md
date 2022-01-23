@@ -7,7 +7,7 @@ A while back, a friend of mine who was working on a coding challenge for some in
 
 This got me thinking of how I would solve this, and this terrible monster is what I came up with:
 
-```
+```python
 class DumbDict:
     __getitem__ = getattr
     __setitem__ = setattr
@@ -15,7 +15,7 @@ class DumbDict:
 
 This is a very silly solution. I don't feel bad about it. Here it is in action:
 
-```
+```python
 >>>d = DumbDict()
 >>>d['hi'] = 'test'
 >>>d['hi']

@@ -17,14 +17,14 @@ These solutions seemed overly complex when all the type information needed is ri
 
 The frame evaluation API was introduced mainly for JIT (just in time) compilers, and debuggers (PyCharm uses it). However, I wanted to use it to analyze the types in frames. You may be asking yourself: what is a frame? A frame is a data structure that Python uses to describe scopes and information about that scope. The simplest to understand frame is a function:
 
-```
+```python
 def test():
     ...
 ```
 
 Modules, functions, generators, and comprehensions have their own scope so they get their own frame. So when I call `os.path.abspath`(path), I am creating a new frame. The frame data is represented by a C struct in CPython (if you aren't familiar with C, just think of it like a Python class with some attributes). It contains information about the function called, such as its name (`abspath` in our example), its file path, and most importantly its locals. Locals is a symbol table (a mapping of names to values) for the scope of the frame. For example, in `abspath`, the `path` argument is a local. Consider the following:
 
-```
+```python
 def hello(name):
     msg = "Hello %s!"
     print(msg % name)
@@ -34,7 +34,7 @@ Both `name` and `msg` are locals in the `hello` frame.
 
 The frame evaluation API allows us to inspect the values of `name` and `msg`. The important part of locals is that function arguments are in the locals of a frame. We can get the type of these objects and log the argument types of the frame. Then we can execute the frame (run the Python code) and capture the return value (and type) as well. Thus the full signature of the function for each call is available. Here is basically how the code works (Python equivalent of the C code in typycal).
 
-```
+```python
 def typycal_evalframe(frame: frameobject, exc: int):
     """
     frame is the current frame to be executed
@@ -66,7 +66,7 @@ def unhook():
 
 The `serialize_types` function just takes the Python object and generates PEP 484 compliant type data that is written to a file. You can call the hook from your code:
 
-```
+```python
 import typycal
 typycal.hook()
 ... # your code here
